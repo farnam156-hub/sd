@@ -68,7 +68,6 @@ ul {
     height: var(--header-h);
     display: flex;
     align-items: center;
-    justify-content: space-between;
     padding: 0 20px;
     background: rgba(255, 255, 255, 0.9);
     backdrop-filter: blur(12px);
@@ -94,7 +93,7 @@ ul {
     color: var(--accent);
 }
 
-/* ===== منو (وسط‌چین) ===== */
+/* ===== منو ===== */
 .nav {
     flex: 1;
     display: flex;
@@ -124,6 +123,7 @@ ul {
     gap: 5px;
     background: none;
     padding: 6px;
+    flex-shrink: 0;
 }
 .hamburger span {
     width: 24px;
@@ -253,11 +253,13 @@ ul {
 /* ===== بخش‌ها ===== */
 .section {
     padding: 60px 0;
+    overflow: visible;
 }
 .container {
     max-width: 1100px;
     margin: 0 auto;
     padding: 0 16px;
+    overflow: visible;
 }
 .section-alt {
     background: var(--bg-alt);
@@ -506,12 +508,18 @@ ul {
     grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
     gap: 14px;
     transition: all 0.4s ease;
+    height: auto !important;
+    overflow: visible !important;
 }
 .gallery-grid.compact .gallery-item:nth-child(n+7) {
     display: none;
 }
 .gallery-grid.full .gallery-item {
     display: block !important;
+}
+.gallery-grid.full {
+    height: auto !important;
+    overflow: visible !important;
 }
 
 .gallery-item {
@@ -521,6 +529,8 @@ ul {
     cursor: pointer;
     aspect-ratio: 4/3;
     transition: transform 0.3s ease;
+    width: 100% !important;
+    height: auto !important;
 }
 .gallery-item img {
     width: 100%;
@@ -982,16 +992,4 @@ ul {
         display: flex;
     }
     .stats {
-        grid-template-columns: repeat(2, 1fr);
-        gap: 16px;
-        padding: 20px;
-    }
-    .stat-item+.stat-item {
-        border-right: none;
-    }
-    .intro-grid,
-    .festival-grid {
-        grid-template-columns: 1fr;
-    }
-    .products-grid {
-        grid
+        grid-template-columns: repeat(2, 1fr
