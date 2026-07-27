@@ -49,24 +49,21 @@ const animateStats = (entries) => {
 const observer = new IntersectionObserver(animateStats, { threshold: 0.5 });
 statNumbers.forEach(num => observer.observe(num));
 
-// ===== 4. گالری با حالت خلاصه/کامل و دسته‌بندی (۱۲ تصویر) =====
+// ===== 4. گالری =====
 const galleryItems = [
-    // طبیعت (۳ عدد)
-    { src: 'https://images.unsplash.com/photo-1500382017468-9049fed747ef?w=600&h=450&fit=crop&crop=center', caption: 'چشم‌انداز بهاری', category: 'nature' },
-    { src: 'https://images.unsplash.com/photo-1440589473619-3cde28941638?w=600&h=450&fit=crop&crop=center', caption: 'جنگل هیرکانی', category: 'nature' },
-    { src: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=600&h=450&fit=crop&crop=center', caption: 'طبیعت بکر سوادکوه', category: 'nature' },
-    // کشاورزی (۳ عدد)
-    { src: 'https://images.unsplash.com/photo-1523712999610-f77fbcfc3843?w=600&h=450&fit=crop&crop=center', caption: 'چای‌زار پله‌ای', category: 'agriculture' },
-    { src: 'https://images.unsplash.com/photo-1500382017468-9049fed747ef?w=600&h=450&fit=crop&crop=center', caption: 'مزارع برنج', category: 'agriculture' },
-    { src: 'https://images.unsplash.com/photo-1580582932707-520aed937b7b?w=600&h=450&fit=crop&crop=center', caption: 'برداشت چای', category: 'agriculture' },
-    // اماکن (۳ عدد)
-    { src: 'https://images.unsplash.com/photo-1580582932707-520aed937b7b?w=600&h=450&fit=crop&crop=center', caption: 'پل تاریخی شاپور', category: 'places' },
-    { src: 'https://images.unsplash.com/photo-1504384308090-c894fdcc538d?w=600&h=450&fit=crop&crop=center', caption: 'امامزاده حسن (آلاشت)', category: 'places' },
-    { src: 'https://images.unsplash.com/photo-1523712999610-f77fbcfc3843?w=600&h=450&fit=crop&crop=center', caption: 'خانه‌های بوم‌گردی', category: 'places' },
-    // فرهنگ (۳ عدد جدید)
-    { src: 'https://images.unsplash.com/photo-1558618666-fcd25c85f3e9?w=600&h=450&fit=crop&crop=center', caption: 'جشنواره چای و آیین محلی', category: 'culture' },
-    { src: 'https://images.unsplash.com/photo-1504384308090-c894fdcc538d?w=600&h=450&fit=crop&crop=center', caption: 'مراسم جشن مردگان', category: 'culture' },
-    { src: 'https://images.unsplash.com/photo-1580582932707-520aed937b7b?w=600&h=450&fit=crop&crop=center', caption: 'آداب و رسوم محلی', category: 'culture' },
+    // طبیعت
+    { src: 'https://s21.uupload.ir/files/chaybagh/47413529-7788-l__4667.jpg', category: 'nature' },
+    { src: 'https://s21.uupload.ir/files/chaybagh/47485241-3397-l__1644.jpg', category: 'nature' },
+    { src: 'https://s21.uupload.ir/files/chaybagh/47413529-7788-l__4667.jpg', category: 'nature' },
+    // کشاورزی
+    { src: 'https://images.unsplash.com/photo-1523712999610-f77fbcfc3843?w=600&h=450&fit=crop&crop=center', category: 'agriculture' },
+    { src: 'https://images.unsplash.com/photo-1500382017468-9049fed747ef?w=600&h=450&fit=crop&crop=center', category: 'agriculture' },
+    { src: 'https://images.unsplash.com/photo-1580582932707-520aed937b7b?w=600&h=450&fit=crop&crop=center', category: 'agriculture' },
+    // اماکن
+    { src: 'https://s25.uupload.ir/files/chaybagh/images.jpeg', category: 'places' },
+    { src: 'https://s21.uupload.ir/files/chaybagh/IMG_20260724_222449.jpg', category: 'places' },
+    { src: 'https://s25.uupload.ir/files/chaybagh/IMG_20260724_222432.jpg', category: 'places' },
+    { src: 'https://s25.uupload.ir/files/chaybagh/IMG_20260724_222353.jpg', category: 'places' },
 ];
 
 const galleryGrid = document.getElementById('galleryGrid');
@@ -76,7 +73,7 @@ let isFullMode = false;
 let currentCategory = 'all';
 
 function getCategoryLabel(cat) {
-    const map = { 'nature': 'طبیعت', 'agriculture': 'کشاورزی', 'places': 'اماکن', 'culture': 'فرهنگ' };
+    const map = { 'nature': 'طبیعت', 'agriculture': 'کشاورزی', 'places': 'اماکن' };
     return map[cat] || cat;
 }
 
@@ -90,9 +87,8 @@ function renderGallery(category) {
         const div = document.createElement('div');
         div.className = 'gallery-item';
         div.innerHTML = `
-            <img src="${item.src}" alt="${item.caption}" loading="lazy" />
+            <img src="${item.src}" alt="" loading="lazy" />
             <div class="overlay">
-                <span>${item.caption}</span>
                 <span class="category-badge">${getCategoryLabel(item.category)}</span>
             </div>
         `;
@@ -114,6 +110,7 @@ function renderGallery(category) {
 
 renderGallery('all');
 
+// دکمه تغییر حالت
 toggleBtn.addEventListener('click', () => {
     isFullMode = !isFullMode;
     
@@ -139,6 +136,7 @@ toggleBtn.addEventListener('click', () => {
     }
 });
 
+// فیلترها
 document.querySelectorAll('.filter-btn').forEach(btn => {
     btn.addEventListener('click', () => {
         if (!isFullMode) return;
@@ -165,8 +163,14 @@ function openLightbox(index) {
 function updateLightbox() {
     const img = galleryItems[currentIndex];
     lbImg.src = img.src;
-    lbImg.alt = img.caption;
-    lbCaption.textContent = img.caption;
+    lbImg.alt = '';
+    if (img.caption) {
+        lbCaption.textContent = img.caption;
+        lbCaption.style.display = 'block';
+    } else {
+        lbCaption.textContent = '';
+        lbCaption.style.display = 'none';
+    }
 }
 
 function closeLightbox() {
