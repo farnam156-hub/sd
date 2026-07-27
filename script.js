@@ -302,4 +302,4 @@ backToTop.addEventListener('click', () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
 });
 
-console.log('✅ پروژه چای‌باغ با موفقیت بارگذاری شد!');
+console.log('✅ پروژه کامل چای‌باغ با موفقیت بارگذاری شد!');
