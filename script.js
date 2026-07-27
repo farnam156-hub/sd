@@ -110,7 +110,6 @@ function renderGallery(category) {
 
 renderGallery('all');
 
-// دکمه تغییر حالت
 toggleBtn.addEventListener('click', () => {
     isFullMode = !isFullMode;
     
@@ -136,7 +135,6 @@ toggleBtn.addEventListener('click', () => {
     }
 });
 
-// فیلترها
 document.querySelectorAll('.filter-btn').forEach(btn => {
     btn.addEventListener('click', () => {
         if (!isFullMode) return;
@@ -304,4 +302,4 @@ backToTop.addEventListener('click', () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
 });
 
-console.log('✅ پروژه کامل چای‌باغ با موفقیت بارگذاری شد!');
+console.log('✅ پروژه چای‌باغ با موفقیت بارگذاری شد!');
