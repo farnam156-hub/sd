@@ -1,174 +1,143 @@
-// ===== 1. منوی همبرگر =====
+// ==========================================
+// 1. منوی همبرگر
+// ==========================================
 const hamburger = document.getElementById('hamburger');
-const mobileMenu = document.getElementById('mobileMenu');
+const navMenu = document.getElementById('navMenu');
 
-hamburger.addEventListener('click', () => {
-    mobileMenu.classList.toggle('show');
-    hamburger.classList.toggle('active');
-});
-
-mobileMenu.querySelectorAll('a').forEach(link => {
-    link.addEventListener('click', () => {
-        mobileMenu.classList.remove('show');
-        hamburger.classList.remove('active');
+if (hamburger && navMenu) {
+    hamburger.addEventListener('click', () => {
+        hamburger.classList.toggle('active');
+        navMenu.classList.toggle('show');
     });
-});
+    // بستن منو با کلیک روی لینک‌ها
+    navMenu.querySelectorAll('a').forEach(link => {
+        link.addEventListener('click', () => {
+            hamburger.classList.remove('active');
+            navMenu.classList.remove('show');
+        });
+    });
+}
 
-// ===== 2. هدر اسکرول =====
+// ==========================================
+// 2. دکمه بازگشت به بالا
+// ==========================================
+const scrollBtn = document.getElementById('scrollTopBtn');
 window.addEventListener('scroll', () => {
-    const header = document.getElementById('header');
-    if (window.scrollY > 50) {
-        header.classList.add('scrolled');
+    if (window.scrollY > 500) {
+        scrollBtn.classList.add('visible');
     } else {
-        header.classList.remove('scrolled');
+        scrollBtn.classList.remove('visible');
     }
 });
+if (scrollBtn) {
+    scrollBtn.addEventListener('click', () => {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+}
 
-// ===== 3. شمارشگر آمار =====
+// ==========================================
+// 3. شمارنده آمار (Intersection Observer)
+// ==========================================
 const statNumbers = document.querySelectorAll('.stat-number');
-const animateStats = (entries) => {
+let counted = false;
+
+const statsObserver = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
-        if (entry.isIntersecting) {
-            const el = entry.target;
-            const target = parseInt(el.dataset.count, 10);
-            let current = 0;
-            const step = Math.ceil(target / 50);
-            const timer = setInterval(() => {
-                current += step;
-                if (current >= target) {
-                    el.textContent = target;
-                    clearInterval(timer);
-                } else {
-                    el.textContent = current;
-                }
-            }, 30);
-            observer.unobserve(el);
+        if (entry.isIntersecting && !counted) {
+            counted = true;
+            statNumbers.forEach(el => {
+                const target = parseInt(el.getAttribute('data-target'));
+                if (isNaN(target)) return;
+                let current = 0;
+                const step = Math.ceil(target / 50);
+                const timer = setInterval(() => {
+                    current += step;
+                    if (current >= target) {
+                        el.textContent = target.toLocaleString();
+                        clearInterval(timer);
+                    } else {
+                        el.textContent = current.toLocaleString();
+                    }
+                }, 25);
+            });
         }
     });
-};
-const observer = new IntersectionObserver(animateStats, { threshold: 0.5 });
-statNumbers.forEach(num => observer.observe(num));
+}, { threshold: 0.5 });
 
-// ===== 4. گالری =====
+statNumbers.forEach(el => statsObserver.observe(el));
+
+// ==========================================
+// 4. گالری و لایتباکس
+// ==========================================
 const galleryItems = [
-    // طبیعت
-    { src: 'https://s21.uupload.ir/files/chaybagh/47413529-7788-l__4667.jpg', category: 'nature' },
-    { src: 'https://s21.uupload.ir/files/chaybagh/47485241-3397-l__1644.jpg', category: 'nature' },
-    { src: 'https://s21.uupload.ir/files/chaybagh/47413529-7788-l__4667.jpg', category: 'nature' },
-    // کشاورزی
-    { src: 'https://images.unsplash.com/photo-1523712999610-f77fbcfc3843?w=600&h=450&fit=crop&crop=center', category: 'agriculture' },
-    { src: 'https://images.unsplash.com/photo-1500382017468-9049fed747ef?w=600&h=450&fit=crop&crop=center', category: 'agriculture' },
-    { src: 'https://images.unsplash.com/photo-1580582932707-520aed937b7b?w=600&h=450&fit=crop&crop=center', category: 'agriculture' },
-    // اماکن
-    { src: 'https://s25.uupload.ir/files/chaybagh/images.jpeg', category: 'places' },
-    { src: 'https://s21.uupload.ir/files/chaybagh/IMG_20260724_222449.jpg', category: 'places' },
-    { src: 'https://s25.uupload.ir/files/chaybagh/IMG_20260724_222432.jpg', category: 'places' },
-    { src: 'https://s25.uupload.ir/files/chaybagh/IMG_20260724_222353.jpg', category: 'places' },
+    { src: 'https://via.placeholder.com/600x400/4caf50/fff?text=جنگل+چایباغ', category: 'nature', caption: 'منظره جنگلی' },
+    { src: 'https://via.placeholder.com/600x400/8bc34a/fff?text=باغ+چای', category: 'farming', caption: 'باغات چای' },
+    { src: 'https://via.placeholder.com/600x400/ff9800/fff?text=روستا', category: 'place', caption: 'بافت روستایی' },
+    { src: 'https://via.placeholder.com/600x400/2196f3/fff?text=آبشار', category: 'nature', caption: 'آبشار زیبا' },
+    { src: 'https://via.placeholder.com/600x400/9c27b0/fff?text=مراسم+محلی', category: 'place', caption: 'مراسم محلی' },
+    { src: 'https://via.placeholder.com/600x400/f44336/fff?text=دامداری', category: 'farming', caption: 'دامداری سنتی' },
 ];
 
 const galleryGrid = document.getElementById('galleryGrid');
-const galleryFilter = document.getElementById('galleryFilter');
-const toggleBtn = document.getElementById('galleryToggleBtn');
-let isFullMode = false;
-let currentCategory = 'all';
-
-function getCategoryLabel(cat) {
-    const map = { 'nature': 'طبیعت', 'agriculture': 'کشاورزی', 'places': 'اماکن' };
-    return map[cat] || cat;
-}
-
-function renderGallery(category) {
-    const filtered = category === 'all' 
-        ? galleryItems 
-        : galleryItems.filter(item => item.category === category);
-    
-    galleryGrid.innerHTML = '';
-    filtered.forEach((item) => {
-        const div = document.createElement('div');
-        div.className = 'gallery-item';
-        div.innerHTML = `
-            <img src="${item.src}" alt="" loading="lazy" />
-            <div class="overlay">
-                <span class="category-badge">${getCategoryLabel(item.category)}</span>
-            </div>
-        `;
-        div.addEventListener('click', () => {
-            const realIndex = galleryItems.indexOf(item);
-            openLightbox(realIndex);
-        });
-        galleryGrid.appendChild(div);
-    });
-
-    if (isFullMode) {
-        galleryGrid.classList.remove('compact');
-        galleryGrid.classList.add('full');
-    } else {
-        galleryGrid.classList.remove('full');
-        galleryGrid.classList.add('compact');
-    }
-}
-
-renderGallery('all');
-
-toggleBtn.addEventListener('click', () => {
-    isFullMode = !isFullMode;
-    
-    if (isFullMode) {
-        galleryGrid.classList.remove('compact');
-        galleryGrid.classList.add('full');
-        galleryFilter.style.display = 'flex';
-        toggleBtn.innerHTML = '<i class="fas fa-compress-alt"></i> بستن گالری';
-        toggleBtn.classList.add('btn-outline');
-        toggleBtn.classList.remove('btn-primary');
-        document.getElementById('gallery').scrollIntoView({ behavior: 'smooth' });
-    } else {
-        galleryGrid.classList.remove('full');
-        galleryGrid.classList.add('compact');
-        galleryFilter.style.display = 'none';
-        toggleBtn.innerHTML = '<i class="fas fa-images"></i> مشاهده همه تصاویر';
-        toggleBtn.classList.remove('btn-outline');
-        toggleBtn.classList.add('btn-primary');
-        document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-        document.querySelector('.filter-btn[data-filter="all"]')?.classList.add('active');
-        currentCategory = 'all';
-        renderGallery('all');
-    }
-});
-
-document.querySelectorAll('.filter-btn').forEach(btn => {
-    btn.addEventListener('click', () => {
-        if (!isFullMode) return;
-        document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-        currentCategory = btn.dataset.filter;
-        renderGallery(currentCategory);
-    });
-});
-
-// ===== 5. لایت‌باکس =====
 const lightbox = document.getElementById('lightbox');
-const lbImg = document.getElementById('lbImg');
-const lbCaption = document.getElementById('lbCaption');
+const lightboxImg = document.getElementById('lightboxImg');
+const lightboxCaption = document.getElementById('lightboxCaption');
+let currentFilter = 'all';
+let currentView = 'compact';
 let currentIndex = 0;
 
-function openLightbox(index) {
-    currentIndex = index;
-    updateLightbox();
-    lightbox.classList.add('active');
-    document.body.style.overflow = 'hidden';
+function renderGallery(filter = 'all', view = 'compact') {
+    if (!galleryGrid) return;
+    const filtered = filter === 'all' ? galleryItems : galleryItems.filter(item => item.category === filter);
+    galleryGrid.className = `gallery-grid ${view}`;
+    galleryGrid.innerHTML = filtered.map((item, index) => `
+        <div class="gallery-item" data-index="${index}" data-category="${item.category}">
+            <img src="${item.src}" alt="${item.caption || 'تصویر گالری'}" loading="lazy" />
+            <div class="caption">${item.caption || ''}</div>
+        </div>
+    `).join('');
+
+    // رویداد کلیک برای لایتباکس
+    document.querySelectorAll('.gallery-item').forEach(el => {
+        el.addEventListener('click', function() {
+            const idx = parseInt(this.dataset.index);
+            // پیدا کردن ایندکس واقعی در آرایه اصلی (با احتساب فیلتر)
+            const realItems = filter === 'all' ? galleryItems : galleryItems.filter(i => i.category === filter);
+            const realIndex = galleryItems.indexOf(realItems[idx]);
+            if (realIndex !== -1) openLightbox(realIndex);
+        });
+    });
 }
 
-function updateLightbox() {
-    const img = galleryItems[currentIndex];
-    lbImg.src = img.src;
-    lbImg.alt = '';
-    if (img.caption) {
-        lbCaption.textContent = img.caption;
-        lbCaption.style.display = 'block';
-    } else {
-        lbCaption.textContent = '';
-        lbCaption.style.display = 'none';
-    }
+// فیلتر
+document.querySelectorAll('.filter-btn').forEach(btn => {
+    btn.addEventListener('click', function() {
+        document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+        this.classList.add('active');
+        currentFilter = this.dataset.filter;
+        renderGallery(currentFilter, currentView);
+    });
+});
+
+// تغییر نمای گالری
+document.querySelectorAll('.view-btn').forEach(btn => {
+    btn.addEventListener('click', function() {
+        document.querySelectorAll('.view-btn').forEach(b => b.classList.remove('active'));
+        this.classList.add('active');
+        currentView = this.dataset.view;
+        renderGallery(currentFilter, currentView);
+    });
+});
+
+// لایتباکس
+function openLightbox(index) {
+    currentIndex = index;
+    const item = galleryItems[index];
+    if (!item) return;
+    lightboxImg.src = item.src;
+    lightboxCaption.textContent = item.caption || '';
+    lightbox.classList.add('active');
+    document.body.style.overflow = 'hidden';
 }
 
 function closeLightbox() {
@@ -176,130 +145,168 @@ function closeLightbox() {
     document.body.style.overflow = '';
 }
 
-document.getElementById('lbClose').addEventListener('click', closeLightbox);
-document.getElementById('lbPrev').addEventListener('click', () => {
-    currentIndex = (currentIndex - 1 + galleryItems.length) % galleryItems.length;
-    updateLightbox();
-});
-document.getElementById('lbNext').addEventListener('click', () => {
-    currentIndex = (currentIndex + 1) % galleryItems.length;
-    updateLightbox();
-});
+function navigateLightbox(direction) {
+    const newIndex = currentIndex + direction;
+    if (newIndex >= 0 && newIndex < galleryItems.length) {
+        openLightbox(newIndex);
+    }
+}
 
-lightbox.addEventListener('click', (e) => {
-    if (e.target === lightbox) closeLightbox();
-});
-
+// رویدادهای لایتباکس
+document.querySelector('.lightbox-close')?.addEventListener('click', closeLightbox);
+document.querySelector('.lightbox-prev')?.addEventListener('click', () => navigateLightbox(-1));
+document.querySelector('.lightbox-next')?.addEventListener('click', () => navigateLightbox(1));
 document.addEventListener('keydown', (e) => {
     if (!lightbox.classList.contains('active')) return;
     if (e.key === 'Escape') closeLightbox();
-    if (e.key === 'ArrowRight') {
-        currentIndex = (currentIndex + 1) % galleryItems.length;
-        updateLightbox();
-    }
-    if (e.key === 'ArrowLeft') {
-        currentIndex = (currentIndex - 1 + galleryItems.length) % galleryItems.length;
-        updateLightbox();
-    }
+    if (e.key === 'ArrowLeft') navigateLightbox(-1);
+    if (e.key === 'ArrowRight') navigateLightbox(1);
+});
+lightbox?.addEventListener('click', (e) => {
+    if (e.target === lightbox) closeLightbox();
 });
 
-// ===== 6. کارت‌های رزرو =====
-const bookings = [
-    { name: 'کلبه چای‌کار', price: 850000, img: 'https://images.unsplash.com/photo-1580582932707-520aed937b7b?w=600&h=400&fit=crop&crop=center', features: ['چای‌زار', 'آبگرم'] },
-    { name: 'خانه بوم‌گردی مهر', price: 620000, img: 'https://images.unsplash.com/photo-1500382017468-9049fed747ef?w=600&h=400&fit=crop&crop=center', features: ['سنتی', 'حیاط'] },
-    { name: 'ویلای جنگلی', price: 1200000, img: 'https://images.unsplash.com/photo-1523712999610-f77fbcfc3843?w=600&h=400&fit=crop&crop=center', features: ['جنگل', 'استخر'] },
-];
+// اجرای اولیه گالری
+renderGallery('all', 'compact');
 
-const bookingGrid = document.getElementById('bookingGrid');
-bookings.forEach((item) => {
-    const div = document.createElement('div');
-    div.className = 'booking-card';
-    div.innerHTML = `
-        <img src="${item.img}" alt="${item.name}" loading="lazy" />
-        <div class="body">
-            <h3>${item.name}</h3>
-            <div class="features">
-                <span><i class="fas fa-user"></i> ${item.features.length} نفر</span>
-                ${item.features.map(f => `<span><i class="fas fa-check"></i> ${f}</span>`).join('')}
-            </div>
-            <div><span class="price">${item.price.toLocaleString()}</span> <span class="unit">تومان / شب</span></div>
-            <button class="btn btn-primary" style="margin-top:10px;" onclick="openModal()">رزرو</button>
-        </div>
-    `;
-    bookingGrid.appendChild(div);
+// ==========================================
+// 5. فرم رزرو (ذخیره در localStorage)
+// ==========================================
+const reserveForm = document.getElementById('reserveForm');
+const formMessage = document.getElementById('formMessage');
+
+reserveForm?.addEventListener('submit', function(e) {
+    e.preventDefault();
+
+    const name = document.getElementById('fullName').value.trim();
+    const phone = document.getElementById('phone').value.trim();
+    const checkIn = document.getElementById('checkIn').value;
+    const checkOut = document.getElementById('checkOut').value;
+    const guests = parseInt(document.getElementById('guests').value) || 1;
+
+    // اعتبارسنجی
+    if (!name || name.length < 3) {
+        showMessage('لطفاً نام کامل را وارد کنید (حداقل ۳ کاراکتر)', 'error');
+        return;
+    }
+    if (!phone || !/^09\d{9}$/.test(phone)) {
+        showMessage('شماره تماس معتبر وارد کنید (مثلاً ۰۹۱۲۳۴۵۶۷۸۹)', 'error');
+        return;
+    }
+    if (!checkIn || !checkOut) {
+        showMessage('تاریخ ورود و خروج را انتخاب کنید', 'error');
+        return;
+    }
+    if (new Date(checkOut) <= new Date(checkIn)) {
+        showMessage('تاریخ خروج باید بعد از تاریخ ورود باشد', 'error');
+        return;
+    }
+
+    // ذخیره
+    const reservations = JSON.parse(localStorage.getItem('reservations')) || [];
+    const newRes = {
+        id: Date.now(),
+        name,
+        phone,
+        checkIn,
+        checkOut,
+        guests,
+        createdAt: new Date().toISOString()
+    };
+    reservations.push(newRes);
+    localStorage.setItem('reservations', JSON.stringify(reservations));
+
+    showMessage('✅ رزرو شما با موفقیت ثبت شد!', 'success');
+    this.reset();
 });
 
-// ===== 7. مودال رزرو =====
-const modal = document.getElementById('bookingModal');
-const modalClose = document.getElementById('modalClose');
-
-window.openModal = function() {
-    modal.classList.add('active');
-    document.body.style.overflow = 'hidden';
-};
-
-function closeModal() {
-    modal.classList.remove('active');
-    document.body.style.overflow = '';
+function showMessage(text, type) {
+    if (!formMessage) return;
+    formMessage.textContent = text;
+    formMessage.className = `form-message ${type}`;
+    setTimeout(() => {
+        formMessage.textContent = '';
+        formMessage.className = 'form-message';
+    }, 5000);
 }
 
-modalClose.addEventListener('click', closeModal);
-modal.addEventListener('click', (e) => {
-    if (e.target === modal) closeModal();
-});
+// ==========================================
+// 6. پنل مدیریت (ادمین)
+// ==========================================
+function loadAdminPanel() {
+    const tbody = document.getElementById('reservationBody');
+    const totalSpan = document.getElementById('totalReservations');
+    const todaySpan = document.getElementById('todayReservations');
+    if (!tbody) return;
 
-document.getElementById('bookingForm').addEventListener('submit', (e) => {
-    e.preventDefault();
-    const data = {
-        name: document.getElementById('bookName').value.trim(),
-        phone: document.getElementById('bookPhone').value.trim(),
-        checkin: document.getElementById('bookCheckin').value,
-        checkout: document.getElementById('bookCheckout').value,
-        guests: document.getElementById('bookGuests').value,
-    };
-    if (!data.name || !data.phone || !data.checkin || !data.checkout) {
-        alert('لطفاً تمام فیلدها را پر کنید.');
+    let reservations = JSON.parse(localStorage.getItem('reservations')) || [];
+    
+    // رفع مشکل داده‌های قدیمی (اضافه کردن createdAt)
+    reservations = reservations.map(r => {
+        if (!r.createdAt) {
+            r.createdAt = new Date().toISOString();
+        }
+        if (!r.id) r.id = Date.now() + Math.random();
+        return r;
+    });
+    localStorage.setItem('reservations', JSON.stringify(reservations));
+
+    // آمار
+    const today = new Date().toISOString().split('T')[0];
+    const todayCount = reservations.filter(r => r.createdAt.startsWith(today)).length;
+    if (totalSpan) totalSpan.textContent = reservations.length;
+    if (todaySpan) todaySpan.textContent = todayCount;
+
+    // نمایش جدول
+    if (reservations.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="8" class="empty-state">هیچ رزروی ثبت نشده است.</td></tr>`;
         return;
     }
-    let list = JSON.parse(localStorage.getItem('reservations')) || [];
-    list.push(data);
-    localStorage.setItem('reservations', JSON.stringify(list));
-    alert('رزرو شما با موفقیت ثبت شد.');
-    document.getElementById('bookingForm').reset();
-    closeModal();
-});
 
-// ===== 8. فرم تماس =====
-document.getElementById('contactForm').addEventListener('submit', (e) => {
-    e.preventDefault();
-    const data = {
-        name: document.getElementById('name').value.trim(),
-        email: document.getElementById('email').value.trim(),
-        subject: document.getElementById('subject').value,
-        message: document.getElementById('message').value.trim(),
-    };
-    if (!data.name || !data.email || !data.message) {
-        alert('لطفاً نام، ایمیل و پیام را پر کنید.');
-        return;
-    }
-    let list = JSON.parse(localStorage.getItem('messages')) || [];
-    list.push(data);
-    localStorage.setItem('messages', JSON.stringify(list));
-    alert('پیام شما با موفقیت ارسال شد.');
-    document.getElementById('contactForm').reset();
-});
+    tbody.innerHTML = reservations.map((r, index) => `
+        <tr>
+            <td>${index + 1}</td>
+            <td>${r.name}</td>
+            <td>${r.phone}</td>
+            <td>${toPersianDate(r.checkIn)}</td>
+            <td>${toPersianDate(r.checkOut)}</td>
+            <td>${r.guests}</td>
+            <td>${toPersianDate(r.createdAt)}</td>
+            <td class="no-print">
+                <button class="btn-delete" onclick="deleteReservation(${r.id})">
+                    <i class="fas fa-trash"></i>
+                </button>
+            </td>
+        </tr>
+    `).join('');
+}
 
-// ===== 9. دکمه برگشت به بالا =====
-const backToTop = document.getElementById('backToTop');
-window.addEventListener('scroll', () => {
-    if (window.scrollY > 400) {
-        backToTop.classList.add('show');
-    } else {
-        backToTop.classList.remove('show');
-    }
-});
-backToTop.addEventListener('click', () => {
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-});
+// تبدیل تاریخ میلادی به شمسی (ساده)
+function toPersianDate(dateStr) {
+    if (!dateStr) return 'نامشخص';
+    const date = new Date(dateStr);
+    if (isNaN(date.getTime())) return dateStr;
+    const options = { year: 'numeric', month: 'long', day: 'numeric' };
+    return date.toLocaleDateString('fa-IR', options);
+}
 
-console.log('✅ پروژه کامل چای‌باغ با موفقیت بارگذاری شد!');
+// حذف تکی
+function deleteReservation(id) {
+    if (!confirm('آیا از حذف این رزرو مطمئن هستید؟')) return;
+    let reservations = JSON.parse(localStorage.getItem('reservations')) || [];
+    reservations = reservations.filter(r => r.id !== id);
+    localStorage.setItem('reservations', JSON.stringify(reservations));
+    loadAdminPanel();
+}
+
+// حذف همه
+function deleteAllReservations() {
+    if (!confirm('⚠️ تمام رزروها حذف خواهند شد! مطمئن هستید؟')) return;
+    localStorage.removeItem('reservations');
+    loadAdminPanel();
+}
+
+// بارگذاری ادمین در صورت وجود تابع
+if (document.getElementById('reservationBody')) {
+    loadAdminPanel();
+                                                        }
