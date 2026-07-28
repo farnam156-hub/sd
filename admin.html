@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>پنل مدیریت - چایباغ</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+    <link href="https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/Vazirmatn-font-face.css" rel="stylesheet" />
+    <link rel="stylesheet" href="style.css" />
+    <style>
+        /* استایل اختصاصی ادمین */
+        .admin-header {
+            background: var(--primary);
+            color: #fff;
+            padding: 1.5rem 0;
+            text-align: center;
+        }
+        .admin-stats {
+            display: flex;
+            gap: 2rem;
+            justify-content: center;
+            margin: 2rem 0;
+            flex-wrap: wrap;
+        }
+        .admin-stat-card {
+            background: #fff;
+            padding: 1.5rem 2.5rem;
+            border-radius: 1rem;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            text-align: center;
+            border-right: 5px solid var(--primary);
+        }
+        .admin-stat-card span {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--primary);
+            display: block;
+        }
+        .admin-actions {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+        }
+        .admin-actions .btn {
+            padding: 0.6rem 1.8rem;
+        }
+        .table-wrapper {
+            overflow-x: auto;
+            background: #fff;
+            border-radius: 1rem;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+            padding: 0.5rem;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.95rem;
+        }
+        th {
+            background: var(--primary-light);
+            color: var(--primary);
+            padding: 1rem 0.8rem;
+            border-bottom: 2px solid var(--primary);
+        }
+        td {
+            padding: 0.8rem;
+            border-bottom: 1px solid #eee;
+            text-align: center;
+        }
+        .btn-delete {
+            background: #e74c3c;
+            color: #fff;
+            border: none;
+            padding: 0.4rem 1rem;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        .btn-delete:hover { background: #c0392b; }
+        .empty-state {
+            text-align: center;
+            padding: 3rem 0;
+            color: #999;
+        }
+        @media print {
+            .admin-actions, .admin-stats, .no-print { display: none !important; }
+            .admin-header { background: #fff !important; color: #000 !important; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="admin-header">
+        <div class="container">
+            <h1><i class="fas fa-cog"></i> پنل مدیریت رزروها</h1>
+            <p><a href="index.html" style="color:#fff;text-decoration:underline;">بازگشت به سایت</a></p>
+        </div>
+    </div>
+
+    <div class="container">
+        <!-- آمار -->
+        <div class="admin-stats">
+            <div class="admin-stat-card">
+                <span id="totalReservations">0</span>
+                <label>مجموع رزروها</label>
+            </div>
+            <div class="admin-stat-card">
+                <span id="todayReservations">0</span>
+                <label>رزروهای امروز</label>
+            </div>
+        </div>
+
+        <!-- دکمه‌های عملیات -->
+        <div class="admin-actions no-print">
+            <button class="btn btn-primary" onclick="window.print()"><i class="fas fa-print"></i> پرینت</button>
+            <button class="btn btn-danger" onclick="deleteAllReservations()"><i class="fas fa-trash-alt"></i> حذف همه</button>
+        </div>
+
+        <!-- جدول -->
+        <div class="table-wrapper">
+            <table id="reservationTable">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>نام</th>
+                        <th>تلفن</th>
+                        <th>تاریخ ورود</th>
+                        <th>تاریخ خروج</th>
+                        <th>مهمان</th>
+                        <th>تاریخ ثبت</th>
+                        <th class="no-print">عملیات</th>
+                    </tr>
+                </thead>
+                <tbody id="reservationBody">
+                    <tr><td colspan="8" class="empty-state">هیچ رزروی ثبت نشده است.</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
